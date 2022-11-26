@@ -19,12 +19,23 @@ import React, { useState } from "react";
 import TodoItem from "../../components/TodoItem";
 import { useAppDispatch, useAppSelector } from "../../store";
 import { addTodo } from "../../store/todo.slice";
+import Visibility from "../../components/VisibilitySelector";
+import VisibilitySelector from "../../components/VisibilitySelector";
 
 const AppHomeScreen = () => {
   const [text, setText] = useState("");
-  const todos = useAppSelector((state) => state.todo.entities);
+  let todos = useAppSelector((state) => state.todo.entities);
 
+  const visibility = useAppSelector(state => state.visibility.visibility);
   const dispatch = useAppDispatch();
+
+  if(visibility === "todo") {
+    todos = todos.filter(todo => !todo.completed);
+  }
+
+  if(visibility === "done") {
+    todos = todos.filter(todo => todo.completed);
+  }
 
   const handleAddTodo = () => {
     dispatch(addTodo({ text }));
@@ -75,6 +86,7 @@ const AppHomeScreen = () => {
           keyExtractor={(item) => item.id}
         />
         <Spacer />
+        <VisibilitySelector />
         <HStack
           mt={4}
           w="100%"
